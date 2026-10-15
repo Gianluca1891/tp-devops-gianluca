@@ -1,4 +1,6 @@
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const openapi = require('./openapi');
 
 const CANCHAS = [1, 2,3];
 const HORA_DE_APERTURA = 10;
@@ -30,8 +32,7 @@ function crearApp(){
 
     const app = express();
     app.use(express.json());
-    /*app.use(express.json()) lee ese texto y lo convierte en un objeto JavaScript, que queda guardado en req.body: req.body  // → { cancha: 2, fecha: "2026-10-20", hora: 21, nombre: "Gianluca" }*/
-    /*express.json(): el cliente manda los datos de la reserva como texto JSON. Esta línea convierte ese texto en un objeto JavaScript, que queda disponible en --------req.body.*/
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapi));
 
     //los datos van a vivir en memoria.
     const reservas = [];
