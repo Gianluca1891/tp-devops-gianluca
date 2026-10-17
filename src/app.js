@@ -39,7 +39,7 @@ function crearApp(){
     let proximoId = 1;
 
     app.get('/health', (req, res) => {
-        res.json({ status: estado });
+        res.json({status: 'ok'});
     });
 
     app.get('/reservas', (req, res) => {
