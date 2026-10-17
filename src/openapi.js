@@ -1,60 +1,60 @@
 // Describe la API para que Swagger UI la muestre en /api-docs.
 const openapi = {
-    openapi: "3.0.3",
+    openapi: '3.0.3',
     info: {
-        title: "API de reservas de canchas",
-        version: "1.0.0",
-        description: "TP Integrador DevOps - Reservas de canchas de fútbol 5",
+        title: 'API de reservas de canchas',
+        version: '1.0.0',
+        description: 'TP Integrador DevOps - Reservas de canchas de fútbol 5',
     },
     paths: {
-        "/health": {
+        '/health': {
             get: {
-                summary: "Estado de la API",
+                summary: 'Estado de la API',
                 responses: {
-                    200: { description: "La API está funcionando" },
+                    200: { description: 'La API está funcionando' },
                 },
             },
         },
-        "/reservas": {
+        '/reservas': {
             get: {
-                summary: "Listar todas las reservas",
+                summary: 'Listar todas las reservas',
                 responses: {
-                    200: { description: "Lista de reservas" },
+                    200: { description: 'Lista de reservas' },
                 },
             },
             post: {
-                summary: "Crear una reserva",
+                summary: 'Crear una reserva',
                 requestBody: {
                     required: true,
                     content: {
-                        "application/json": {
-                            schema: { $ref: "#/components/schemas/NuevaReserva" },
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/NuevaReserva' },
                         },
                     },
                 },
                 responses: {
-                    201: { description: "Reserva creada" },
-                    400: { description: "Datos inválidos" },
-                    409: { description: "La cancha ya está reservada en ese horario" },
+                    201: { description: 'Reserva creada' },
+                    400: { description: 'Datos inválidos' },
+                    409: { description: 'La cancha ya está reservada en ese horario' },
                 },
             },
         },
-        "/reservas/{id}": {
+        '/reservas/{id}': {
             parameters: [
-                { name: "id", in: "path", required: true, schema: { type: "integer" } },
+                { name: 'id', in: 'path', required: true, schema: { type: 'integer' } },
             ],
             get: {
-                summary: "Obtener una reserva",
+                summary: 'Obtener una reserva',
                 responses: {
-                    200: { description: "La reserva" },
-                    404: { description: "No existe una reserva con ese id" },
+                    200: { description: 'La reserva' },
+                    404: { description: 'No existe una reserva con ese id' },
                 },
             },
             delete: {
-                summary: "Cancelar una reserva",
+                summary: 'Cancelar una reserva',
                 responses: {
-                    204: { description: "Reserva cancelada" },
-                    404: { description: "No existe una reserva con ese id" },
+                    204: { description: 'Reserva cancelada' },
+                    404: { description: 'No existe una reserva con ese id' },
                 },
             },
         },
@@ -62,13 +62,13 @@ const openapi = {
     components: {
         schemas: {
             NuevaReserva: {
-                type: "object",
-                required: ["cancha", "fecha", "hora", "nombre"],
+                type: 'object',
+                required: ['cancha', 'fecha', 'hora', 'nombre'],
                 properties: {
-                    cancha: { type: "integer", minimum: 1, maximum: 3, example: 2 },
-                    fecha: { type: "string", example: "2026-10-20" },
-                    hora: { type: "integer", minimum: 10, maximum: 22, example: 21 },
-                    nombre: { type: "string", example: "Gianluca" },
+                    cancha: { type: 'integer', minimum: 1, maximum: 3, example: 2 },
+                    fecha: { type: 'string', example: '2026-10-20' },
+                    hora: { type: 'integer', minimum: 10, maximum: 22, example: 21 },
+                    nombre: { type: 'string', example: 'Gianluca' },
                 },
             },
         },

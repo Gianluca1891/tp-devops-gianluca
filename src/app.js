@@ -40,11 +40,11 @@ function crearApp(){
 
     app.get('/health', (req, res) => {
         res.json({status: 'ok'});
-    })
+    });
 
     app.get('/reservas', (req, res) => {
         res.json(reservas);
-    })
+    });
 
     app.get('/reservas/:id', (req, res) =>{
         const reserva = reservas.find((r) => r.id === Number(req.params.id));
@@ -52,7 +52,7 @@ function crearApp(){
             return res.status(404).json({error: 'Reserva no encontrada'});
         }
         res.json(reserva);
-    })
+    });
 
 
     app.post('/reservas', (req, res) => {
@@ -60,7 +60,7 @@ function crearApp(){
 
         const error = validarReserva(datos);
         if(error){
-            return res.status(400).json({error})
+            return res.status(400).json({error});
         }
 
         const ocupada = reservas.some( (r) => r.cancha === datos.cancha && r.fecha === datos.fecha && r.hora === datos.hora);
