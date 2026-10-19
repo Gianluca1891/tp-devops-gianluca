@@ -18,5 +18,8 @@ COPY src ./src
 
 USER node
 
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
+
 EXPOSE 3000
 CMD ["node", "src/server.js"]

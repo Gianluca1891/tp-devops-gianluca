@@ -1,12 +1,21 @@
 // Describe la API para que Swagger UI la muestre en /api-docs.
+const VERSION = process.env.APP_VERSION || 'dev';
 const openapi = {
     openapi: '3.0.3',
     info: {
         title: 'API de reservas de canchas',
-        version: '1.0.0',
+        version: VERSION,
         description: 'TP Integrador DevOps - Reservas de canchas de fútbol 5',
     },
     paths: {
+        '/': {
+            get: {
+                summary: 'Redirige a esta documentación',
+                responses: {
+                    302: { description: 'Redirección a /api-docs' },
+                },
+            },
+        },
         '/health': {
             get: {
                 summary: 'Estado de la API',

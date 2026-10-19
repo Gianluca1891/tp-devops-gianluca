@@ -6,6 +6,8 @@ const CANCHAS = [1, 2,3];
 const HORA_DE_APERTURA = 10;
 const HORA_DE_CIERRE = 22;
 
+const VERSION = process.env.APP_VERSION || 'dev'; //variable de entorno para actualizar version en ui de swagger
+
 function validarReserva({cancha, fecha, hora, nombre}){
     
     if(!CANCHAS.includes(cancha)){
@@ -38,8 +40,12 @@ function crearApp(){
     const reservas = [];
     let proximoId = 1;
 
+    app.get('/', (req, res) => {
+        res.redirect('/api-docs');
+    });
+
     app.get('/health', (req, res) => {
-        res.json({status: 'ok'});
+        res.json({ status: 'ok', version: VERSION });
     });
 
     app.get('/reservas', (req, res) => {
