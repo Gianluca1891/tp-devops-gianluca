@@ -13,6 +13,8 @@ jobs:
         name: Publicar imagen en Docker Hub
         needs: ci
         runs-on: ubuntu-latest
+        outputs:
+            version: ${{ steps.meta.outputs.version }}
         steps:
             - name: Descargar el código
               uses: actions/checkout@v4
@@ -39,3 +41,18 @@ jobs:
                   context: .
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
+                  build-args: |
+                      APP_VERSION=${{ steps.meta.outputs.version }}
+
+    deploy:
+        name: Desplegar en Render
+        needs: docker
+        runs-on: ubuntu-latest
+        steps:
+            - name: Llamar al Deploy Hook con la versión publicada
+              env:
+                  RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+                  IMAGEN: docker.io/gianluca189120/tp-devops-gianluca:${{ needs.docker.outputs.version }}
+              run: |
+                  echo "Desplegando $IMAGEN"
+                  curl --fail --silent --show-error --get --data-urlencode "imgURL=$IMAGEN" "$RENDER_DEPLOY_HOOK"
