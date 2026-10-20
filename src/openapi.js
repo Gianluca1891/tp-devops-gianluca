@@ -24,6 +24,14 @@ const openapi = {
                 },
             },
         },
+        '/metrics': {
+            get: {
+                summary: 'Métricas en formato Prometheus (las lee Grafana)',
+                responses: {
+                    200: { description: 'Métricas de la API en texto plano' },
+                },
+            },
+        },
         '/reservas': {
             get: {
                 summary: 'Listar todas las reservas',

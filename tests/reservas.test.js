@@ -18,6 +18,18 @@ describe('GET /health', () => {
     });
 });
 
+describe('GET /metrics', () => {
+    test('expone las métricas HTTP en formato Prometheus', async () => {
+        await request(app).get('/health');
+
+        const res = await request(app).get('/metrics');
+
+        expect(res.status).toBe(200);
+        expect(res.text).toContain('http_request_duration_seconds');
+        expect(res.text).toContain('route="/health"');
+    });
+});
+
 describe('GET /', () => {
     test('redirige a la documentación de Swagger', async () => {
         const res = await request(app).get('/');

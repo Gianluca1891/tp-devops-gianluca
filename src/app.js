@@ -2,6 +2,7 @@ const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const openapi = require('./openapi');
 const log = require('./logger');
+const { registro, duracionPeticiones } = require('./metricas');
 
 const CANCHAS = [1, 2,3];
 const HORA_DE_APERTURA = 10;
@@ -30,19 +31,32 @@ function validarReserva({cancha, fecha, hora, nombre}){
     return null;
 }
 
-// Middleware: registra cada petición cuando termina, con su resultado y duración.
+// Middleware: registra cada petición cuando termina (log JSON + métrica).
 function registrarPeticion(req, res, next) {
+    // Las lecturas de /metrics que hace Grafana no se cuentan como tráfico de la API.
+    if (req.originalUrl === '/metrics') {
+        return next();
+    }
+
     const inicio = process.hrtime.bigint();
 
     res.on('finish', () => {
-        const duracionMs = Number(process.hrtime.bigint() - inicio) / 1e6;
+        const duracionSegundos = Number(process.hrtime.bigint() - inicio) / 1e9;
         const nivel = res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info';
+
+        // Ruta "plantilla" (/reservas/:id) y no la real (/reservas/7): si no, habría una serie por cada id.
+        const ruta = req.route ? req.route.path : 'sin_ruta';
+
+        duracionPeticiones.observe(
+            { method: req.method, route: ruta, status_code: res.statusCode },
+            duracionSegundos,
+        );
 
         log(nivel, 'peticion http', {
             method: req.method,
             path: req.originalUrl.split('?')[0],
             status_code: res.statusCode,
-            duration_ms: Math.round(duracionMs * 100) / 100,
+            duration_ms: Math.round(duracionSegundos * 1000 * 100) / 100,
         });
     });
 
@@ -66,6 +80,11 @@ function crearApp(){
 
     app.get('/health', (req, res) => {
         res.json({ status: 'ok', version: VERSION });
+    });
+
+    app.get('/metrics', async (req, res) => {
+        res.set('Content-Type', registro.contentType);
+        res.send(await registro.metrics());
     });
 
     app.get('/reservas', (req, res) => {
