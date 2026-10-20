@@ -1,5 +1,6 @@
 const request = require('supertest');
 const crearApp = require('../src/app');
+process.env.METRICS_TOKEN = 'token-de-prueba';
 
 const reservaValida = { cancha: 2, fecha: '2026-10-20', hora: 21, nombre: 'Gianluca' };
 
@@ -19,14 +20,30 @@ describe('GET /health', () => {
 });
 
 describe('GET /metrics', () => {
-    test('expone las métricas HTTP en formato Prometheus', async () => {
+    test('expone las métricas con el token correcto', async () => {
         await request(app).get('/health');
 
-        const res = await request(app).get('/metrics');
+        const res = await request(app)
+            .get('/metrics')
+            .set('Authorization', 'Bearer token-de-prueba');
 
         expect(res.status).toBe(200);
         expect(res.text).toContain('http_request_duration_seconds');
         expect(res.text).toContain('route="/health"');
+    });
+
+    test('devuelve 401 sin token', async () => {
+        const res = await request(app).get('/metrics');
+
+        expect(res.status).toBe(401);
+    });
+
+    test('devuelve 401 con un token incorrecto', async () => {
+        const res = await request(app)
+            .get('/metrics')
+            .set('Authorization', 'Bearer cualquier-cosa');
+
+        expect(res.status).toBe(401);
     });
 });
 
