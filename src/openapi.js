@@ -25,12 +25,14 @@ const openapi = {
             },
         },
         '/metrics': {
-            get: {
-                summary: 'Métricas en formato Prometheus (las lee Grafana)',
-                responses: {
-                    200: { description: 'Métricas de la API en texto plano' },
+                get: {
+                    summary: 'Métricas en formato Prometheus (las lee Grafana)',
+                    description: 'Requiere el header Authorization: Bearer <METRICS_TOKEN>.',
+                    responses: {
+                        200: { description: 'Métricas de la API en texto plano' },
+                        401: { description: 'Falta el token o es incorrecto' },
+                    },
                 },
-            },
         },
         '/reservas': {
             get: {

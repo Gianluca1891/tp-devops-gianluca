@@ -82,7 +82,13 @@ function crearApp(){
         res.json({ status: 'ok', version: VERSION });
     });
 
+    // Solo Grafana puede leer las métricas: tiene que mandar el token en el header Authorization.
     app.get('/metrics', async (req, res) => {
+        const token = process.env.METRICS_TOKEN;
+        if (!token || req.get('Authorization') !== `Bearer ${token}`) {
+            return res.status(401).json({ error: 'No autorizado' });
+        }
+
         res.set('Content-Type', registro.contentType);
         res.send(await registro.metrics());
     });
