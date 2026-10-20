@@ -1,6 +1,7 @@
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const openapi = require('./openapi');
+const log = require('./logger');
 
 const CANCHAS = [1, 2,3];
 const HORA_DE_APERTURA = 10;
@@ -29,10 +30,29 @@ function validarReserva({cancha, fecha, hora, nombre}){
     return null;
 }
 
+// Middleware: registra cada petición cuando termina, con su resultado y duración.
+function registrarPeticion(req, res, next) {
+    const inicio = process.hrtime.bigint();
+
+    res.on('finish', () => {
+        const duracionMs = Number(process.hrtime.bigint() - inicio) / 1e6;
+        const nivel = res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info';
+
+        log(nivel, 'peticion http', {
+            method: req.method,
+            path: req.originalUrl.split('?')[0],
+            status_code: res.statusCode,
+            duration_ms: Math.round(duracionMs * 100) / 100,
+        });
+    });
+
+    next();
+}
 
 function crearApp(){
 
     const app = express();
+    app.use(registrarPeticion);
     app.use(express.json());
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapi));
 
