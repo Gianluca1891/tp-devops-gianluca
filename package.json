@@ -21,6 +21,7 @@
   "homepage": "https://github.com/Gianluca1891/tp-devops-gianluca#readme",
   "dependencies": {
     "express": "^5.3.0",
+    "prom-client": "^15.1.3",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
