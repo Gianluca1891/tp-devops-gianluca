@@ -5,7 +5,7 @@ const openapi = {
     info: {
         title: 'API de reservas de canchas',
         version: VERSION,
-        description: 'TP Integrador DevOps - Reservas de canchas de fútbol 5',
+        description: 'TP Integrador DevOps - Reservas de canchas de fútbol 5 (canchas 1 a 3, de 10 a 22 h)',
     },
     paths: {
         '/': {
